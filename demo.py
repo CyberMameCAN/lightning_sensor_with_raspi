@@ -42,7 +42,7 @@ def handle_interrupt(channel):
             message_send(msg)
 
 def message_send(msg):
-    url = 'https://hooks.slack.com/services/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'
+    url = 'https://hooks.slack.com/services/XXXXXXX/XXXXXXXXXX/XXXXXXXXXXXXXXXX'
     slack = slackweb.Slack(url=url)
     slack.notify(text=msg)
 
