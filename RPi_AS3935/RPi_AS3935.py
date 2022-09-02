@@ -5,7 +5,7 @@ class RPi_AS3935:
     """A basic class used for interacting with the AS3935 lightning
     sensor from a Raspberry Pi over I2C"""
 
-    def __init__(self, address, bus=0):
+    def __init__(self, address, bus=1):
         self.address = address
         import smbus
         self.i2cbus = smbus.SMBus(bus)
@@ -161,9 +161,11 @@ class RPi_AS3935:
         """
         self.read_data()
         if indoors:
-            write_value = (self.registers[0x00] & 0xC1) | 0x24
+            #write_value = (self.registers[0x00] & 0xC1) | 0x24
+            write_value = (self.registers[0x00] & 0xC1) | (0b10010 << 1)
         else:
-            write_value = (self.registers[0x00] & 0xC1) | 0x1C
+            #write_value = (self.registers[0x00] & 0xC1) | 0x1C
+            write_value = (self.registers[0x00] & 0xC1) | (0b01110 << 1)
         self.set_byte(0x00, write_value)
 
     def set_mask_disturber(self, mask_dist):
@@ -219,7 +221,10 @@ class RPi_AS3935:
 
         This method should rarely be used directly.
         """
-        self.i2cbus.write_byte_data(self.address, register, value)
+        try:
+            self.i2cbus.write_byte_data(self.address, register, value)
+        except Exception as e:
+            print '==Error set_byte()==' + str(e)
 
     def read_data(self):
         """
@@ -231,4 +236,7 @@ class RPi_AS3935:
 
         This method should rarely be called directly.
         """
-        self.registers = self.i2cbus.read_i2c_block_data(self.address, 0x00)
+        try:
+            self.registers = self.i2cbus.read_i2c_block_data(self.address, 0x00)
+        except Exception as e:
+            print '==Error read_data()==' + str(e)
